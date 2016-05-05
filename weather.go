@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"strings"
 
 	simplejson "github.com/bitly/go-simplejson"
 )
@@ -86,7 +88,20 @@ func getWeatherUrlByCityid(cityid string) string {
 
 //主函数
 func main() {
-	url := getWeatherUrlByCityid("101090101")
+	zoncode := "101090101"
+	if len(os.Args) == 1 {
+	} else if len(os.Args) == 2 {
+		name := strings.TrimSpace(os.Args[1])
+		zoncode = getCityIdByName(name)
+		if zoncode == "" {
+			fmt.Println("未找到城市[", name, "]")
+			return
+		}
+	} else {
+		fmt.Println("参数错误")
+		return
+	}
+	url := getWeatherUrlByCityid(zoncode)
 	fmt.Println(url)
 	jsonBody := getChinaWeather(url)
 	var wc WeatherChina
