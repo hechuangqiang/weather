@@ -3,9 +3,10 @@ package main
 
 import (
 	"fmt"
-	simplejson "github.com/bitly/go-simplejson"
 	"io/ioutil"
 	"net/http"
+
+	simplejson "github.com/bitly/go-simplejson"
 )
 
 //中国天气预报结构体
@@ -24,12 +25,20 @@ type WeatherChina struct {
 	Qy      string "qy"
 }
 
-func (wc WeatherChina) printWeather(){
-	fmt.Println(wc)
+func (wc WeatherChina) printWeather() {
 	fmt.Println("-------------------------")
-	fmt.Printf("\t| city | %s\t|\n",wc.City)
-	fmt.Println("\t-----------------")
-	fmt.Printf("\t| temp | %s\t|\n",wc.Temp)
+	fmt.Println("City    :", wc.City)
+	fmt.Println("CityId  :", wc.Cityid)
+	fmt.Println("Temp    :", wc.Temp)
+	fmt.Println("WD      :", wc.WD)
+	fmt.Println("WS      :", wc.WS)
+	fmt.Println("SD      :", wc.SD)
+	fmt.Println("WSE     :", wc.WSE)
+	fmt.Println("Time    :", wc.Time)
+	fmt.Println("IsReadar:", wc.IsRadar)
+	fmt.Println("Radar   :", wc.Radar)
+	fmt.Println("Njd     :", wc.Njd)
+	fmt.Println("Qy      :", wc.Qy)
 	fmt.Println("-------------------------")
 }
 
@@ -55,13 +64,13 @@ func ResolveWeatherJson(weatherJson string, wc *WeatherChina) {
 }
 
 //get weather json data with url
-func getChinaWeather(url string) (string){
-	resp,err := http.Get(url)
+func getChinaWeather(url string) string {
+	resp, err := http.Get(url)
 	defer resp.Body.Close()
 	if err != nil {
 		fmt.Println("http Get err")
 	}
-	body,err := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println("resp>Body readAll err")
 	}
@@ -69,15 +78,16 @@ func getChinaWeather(url string) (string){
 	return jsonBody
 }
 
-//get url with paramater cityid 
+//get url with paramater cityid
 //cityid search url:http://www.cnblogs.com/wangjingblogs/p/3192953.html
-func getWeatherUrlByCityid(cityid string) (string){
+func getWeatherUrlByCityid(cityid string) string {
 	return "http://www.weather.com.cn/data/sk/" + cityid + ".html"
 }
 
 //主函数
 func main() {
 	url := getWeatherUrlByCityid("101090101")
+	fmt.Println(url)
 	jsonBody := getChinaWeather(url)
 	var wc WeatherChina
 	ResolveWeatherJson(jsonBody, &wc)
